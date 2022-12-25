@@ -1,0 +1,4 @@
+async def my_callback(interaction):
+    await interaction.response.send_message(f"You chose {select.values}")
+  
+  select.callback = my_callback

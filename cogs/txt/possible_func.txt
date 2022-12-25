@@ -1,0 +1,102 @@
+async def checkShiftSetUp(interaction):
+  num = 0
+  con = sqlite3.connect("cogs/data/bot_server.db")
+  cur = con.cursor()
+  res = cur.execute(f"SELECT on_shift_role_id, shift_channel_id, shift_reqirement FROM setup_servers WHERE guild_id = '{int(interaction.guild.id)}'")
+  guild = res.fetchone()
+  if guild == None:
+    return True
+  for x in guild:
+    if x == None:
+      num += 1
+  if num == 3 or num == 2 or num == 1:
+    em = nextcord.Embed(title="Setup", description="The shift section is already set-up!", color=nextcord.Color.blue())
+    await interaction.followup.send(embed = em)
+    return False
+  else:
+    return True
+
+async def checkStaffSetUp(interaction):
+  num = 0
+  con = sqlite3.connect("cogs/data/bot_server.db")
+  cur = con.cursor()
+  res = cur.execute(f"SELECT staff_channel_id, staff_role_id, management_role_id, loa_role_id FROM setup_servers WHERE guild_id = '{int(interaction.guild.id)}'")
+  guild = res.fetchone()
+  if guild == None:
+    return True
+  for x in guild:
+    if x == None:
+      num += 1
+  if num == 4 or num == 3 or num == 2 or num == 1:
+    em = nextcord.Embed(title="Setup", description="The staff section is already set-up!", color=nextcord.Color.blue())
+    await interaction.followup.send(embed = em)
+    return False
+  else:
+    return True
+
+async def checkPunishSetUp(interaction):
+  num = 0
+  con = sqlite3.connect("cogs/data/bot_server.db")
+  cur = con.cursor()
+  res = cur.execute(f"SELECT punishment_channel_id FROM setup_servers WHERE guild_id = '{int(interaction.guild.id)}'")
+  guild = res.fetchone()
+  if guild == None:
+    return True
+  for x in guild:
+    if x == None:
+      num += 1
+  if num == 1:
+    em = nextcord.Embed(title="Setup", description="The Punishment section is already set-up!", color=nextcord.Color.blue())
+    await interaction.followup.send(embed = em)
+    return False
+  else:
+    return True
+
+
+
+
+
+
+
+
+async def pingResponse(role, interaction):
+  word = []
+  finalword = ""
+  for letter in role.content:
+    word.append(letter)
+  for x in word[3:-1]:
+    finalword += x
+
+  try:
+    shift_role = nextcord.utils.get(interaction.guild.roles, id=int(finalword))
+    if shift_role == None:
+      return False
+    else:
+      return shift_role
+    
+  except Exception as e:
+    return False
+
+#This gets a channel response from a user
+async def channelResponse(channel, interaction):
+  word = []
+  finalword = ""
+  for letter in channel.content:
+    word.append(letter)
+  for x in word[2:-1]:
+    finalword += x
+  try:
+    
+    shift_role = nextcord.utils.get(interaction.guild.roles, id=int(finalword))
+    user = interaction.guild.get_member(int(finalword))
+    if user != None:
+      return False
+    channel = nextcord.utils.get(interaction.guild.channels, id=int(finalword))
+    try:
+      if user.id != int(finalword) or shift_role.id != int(finalword):
+        return False
+    except:
+      return channel
+    return channel
+  except Exception as e:
+    return False
